@@ -1,0 +1,66 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+# Conversor de almacenamiento: KB, MB, GB y TB
+BASES = {
+    "Base 10": 1000,
+    "Base 2": 1024,
+}
+unidades = ["KB", "MB", "GB", "TB"]
+
+
+def convertir():
+    origen = combo_origen.get()
+    destino = combo_destino.get()
+    base = combo_base.get()
+
+    try:
+        cantidad = float(entrada.get())
+    except ValueError:
+        messagebox.showerror("Error", "Escribe un número válido.")
+        return
+
+    factor = BASES[base]
+    diferencia = unidades.index(destino) - unidades.index(origen)
+    resultado = cantidad / (factor ** diferencia)
+
+    etiqueta_resultado.config(
+        text=f"{cantidad} {origen} = {resultado:.4f} {destino} ({base})"
+    )
+
+
+ventana = tk.Tk()
+ventana.title("Conversor de almacenamiento")
+ventana.geometry("890x345")
+ventana.resizable(False, False)
+
+marco = ttk.Frame(ventana, padding=20)
+marco.pack(fill="both", expand=True)
+
+ttk.Label(marco, text="Cantidad:").grid(row=0, column=0, sticky="w")
+entrada = ttk.Entry(marco, width=15)
+entrada.grid(row=0, column=1, padx=5, pady=5)
+
+ttk.Label(marco, text="Sistema:").grid(row=1, column=0, sticky="w")
+combo_base = ttk.Combobox(marco, values=list(BASES.keys()), state="readonly", width=12)
+combo_base.set("Base 2")
+combo_base.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+ttk.Label(marco, text="De:").grid(row=2, column=0, sticky="w")
+combo_origen = ttk.Combobox(marco, values=unidades, state="readonly", width=12)
+combo_origen.set("GB")
+combo_origen.grid(row=2, column=1, padx=5, pady=5, sticky="w")
+
+ttk.Label(marco, text="A:").grid(row=3, column=0, sticky="w")
+combo_destino = ttk.Combobox(marco, values=unidades, state="readonly", width=12)
+combo_destino.set("MB")
+combo_destino.grid(row=3, column=1, padx=5, pady=5, sticky="w")
+
+ttk.Button(marco, text="Convertir", command=convertir).grid(
+    row=4, column=0, columnspan=2, pady=10
+)
+
+etiqueta_resultado = ttk.Label(marco, text="", font=("Arial", 11, "bold"))
+etiqueta_resultado.grid(row=5, column=0, columnspan=2)
+
+ventana.mainloop()
